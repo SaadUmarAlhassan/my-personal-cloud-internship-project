@@ -1,0 +1,6 @@
+# Local .terraform directories and lock files
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.DS_Store
