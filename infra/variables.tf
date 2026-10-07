@@ -2,7 +2,7 @@ variable "region" {
   description = "AWS region. Everyone in the cohort uses the same one."
   type        = string
 }
- 
+
 variable "group_name" {
   description = "Short group name, used as a prefix on every resource"
   type        = string
@@ -14,12 +14,12 @@ variable "image_tag" {
   type        = string
   default     = "v1"
 }
- 
+
 variable "container_port" {
   type    = number
   default = 8080
 }
- 
+
 variable "db_password" {
   description = "Database password. Comes from terraform.tfvars, never from here."
   type        = string
