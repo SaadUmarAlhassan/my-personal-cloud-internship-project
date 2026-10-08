@@ -5,8 +5,9 @@ terraform {
     bucket         = "demo-personal-group1b-tfstate-701935371420"   # YOUR bucket
     key            = "infra/terraform.tfstate"
     region         = "eu-west-1"
-    dynamodb_table = "demo-personal-group1b-tflock"                 # YOUR table
+    #dynamodb_table = "demo-personal-group1b-tflock"                 # YOUR table
     encrypt        = true
+    use_lockfile = true
   }
 
 # new workflow comment
@@ -26,7 +27,7 @@ provider "aws" {
   default_tags {
     tags = {
       Group     = var.group_name
-      Programme = "cloud-personal-work-ee"
+      Programme = "cloud-personal-work-ff"
       ManagedBy = "terraform"
     }
   }
