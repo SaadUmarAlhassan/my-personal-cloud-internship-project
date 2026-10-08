@@ -1,6 +1,15 @@
 terraform {
   required_version = "~> 1.9"
 
+  backend "s3" {
+    bucket         = "demo-personal-group1b-tfstate-701935371420"   # YOUR bucket
+    key            = "infra/terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "demo-personal-group1b-tflock"                 # YOUR table
+    encrypt        = true
+  }
+
+# new workflow comment
   required_providers {
     aws = {
       source  = "hashicorp/aws"

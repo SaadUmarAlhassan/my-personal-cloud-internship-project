@@ -1,6 +1,13 @@
 # Local .terraform directories and lock files
 .terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+*.terraform.tfstate.lock.info
+
+# Sensitive variables (never commit real credentials)
 *.tfvars
+!example.tfvars
+
+# OS generated files
 .DS_Store
+Thumbs.db
