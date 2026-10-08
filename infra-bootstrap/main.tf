@@ -79,8 +79,8 @@ data "aws_iam_openid_connect_provider" "github" {
 # the read-only plan role
  
 locals {
- # repo = "${var.github_org}/${var.github_repo}"
-  repo = "${var.github_repo}"
+ repo = "${var.github_org}/${var.github_repo}"
+  # repo = "${var.github_repo}"
 }
  
 data "aws_iam_policy_document" "plan_trust" {
@@ -107,6 +107,17 @@ data "aws_iam_policy_document" "plan_trust" {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
  
 resource "aws_iam_role" "plan" {
   name               = "${var.group_name}-gha-plan"
