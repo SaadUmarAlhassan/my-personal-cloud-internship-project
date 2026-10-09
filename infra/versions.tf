@@ -27,7 +27,7 @@ provider "aws" {
   default_tags {
     tags = {
       Group     = var.group_name
-      Programme = "cloud-project"
+      Programme = "cloud-project10"
       ManagedBy = "terraform"
     }
   }
