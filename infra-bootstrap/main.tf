@@ -76,11 +76,12 @@ data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-# the read-only plan role
+
+# The read-only plan role
+# added to infra-bootstrap/main.tf
  
 locals {
- repo = "${var.github_org}/${var.github_repo}"
-  # repo = "${var.github_repo}"
+  repo = "${var.github_org}/${var.github_repo}"
 }
  
 data "aws_iam_policy_document" "plan_trust" {
@@ -107,20 +108,9 @@ data "aws_iam_policy_document" "plan_trust" {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
  
 resource "aws_iam_role" "plan" {
-  name               = "${var.group_name}-gha-plan"
+  name               = "${var.group_name}-personal-plan"
   assume_role_policy = data.aws_iam_policy_document.plan_trust.json
 }
  
@@ -129,7 +119,8 @@ resource "aws_iam_role_policy_attachment" "plan_readonly" {
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
 }
 
-# deploy role
+
+# The deploy role
 
 data "aws_iam_policy_document" "deploy_trust" {
   statement {
@@ -139,6 +130,8 @@ data "aws_iam_policy_document" "deploy_trust" {
     principals {
       type        = "Federated"
       identifiers = [data.aws_iam_openid_connect_provider.github.arn]
+
+      
     }
  
     condition {
@@ -157,7 +150,7 @@ data "aws_iam_policy_document" "deploy_trust" {
 }
  
 resource "aws_iam_role" "deploy" {
-  name               = "${var.group_name}-gha-deploy"
+  name               = "${var.group_name}-personal-deploy"
   assume_role_policy = data.aws_iam_policy_document.deploy_trust.json
 }
  
@@ -169,3 +162,4 @@ resource "aws_iam_role_policy_attachment" "deploy_admin" {
  
 output "plan_role_arn"   { value = aws_iam_role.plan.arn }
 output "deploy_role_arn" { value = aws_iam_role.deploy.arn }
+
