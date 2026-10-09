@@ -5,9 +5,9 @@ terraform {
     bucket         = "demo-personal-group1b-tfstate-701935371420"   # YOUR bucket
     key            = "infra/terraform.tfstate"
     region         = "eu-west-1"
-    #dynamodb_table = "demo-personal-group1b-tflock"                 # YOUR table
+    dynamodb_table = "demo-personal-group1b-tflock"                 # YOUR table
     encrypt        = true
-    use_lockfile = true
+    #use_lockfile = true
   }
 
 # new workflow comment
@@ -32,3 +32,5 @@ provider "aws" {
     }
   }
 }
+
+# just a comment with another
