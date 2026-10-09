@@ -19,6 +19,8 @@ jobs:
         working-directory: infra
     env:
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+      # NEW: tag of the image that already exists in ECR (set under Settings > Variables)
+      IMAGE_TAG: ${{ vars.IMAGE_TAG }}
  
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +41,13 @@ jobs:
       # -lock=false because the plan role is read-only and cannot
       # write a lock row. Safe here: a plan changes nothing.
       - run: |
+          # NEW: fail early if the IMAGE_TAG variable is missing
+          : "${IMAGE_TAG:?Set the IMAGE_TAG repository variable to a tag that exists in ECR}"
+          # OLD (commented out): tagged with the commit SHA
+          # terraform plan -no-color -lock=false \
+          #   -var-file=ci.tfvars \
+          #   -var="image_tag=${{ github.sha }}"
+          # NEW: use the existing ECR tag
           terraform plan -no-color -lock=false \
             -var-file=ci.tfvars \
-            -var="image_tag=${{ github.sha }}"
+            -var="image_tag=${IMAGE_TAG}"

@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+      # NEW: tag of the image that already exists in ECR (set under Settings > Variables)
+      IMAGE_TAG: ${{ vars.IMAGE_TAG }}
  
     steps:
       - uses: actions/checkout@v4
@@ -28,18 +30,20 @@ jobs:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
  
-      - uses: aws-actions/amazon-ecr-login@v2
-        id: ecr
+      # OLD (commented out): CI no longer builds the image. The app source is not in this
+      # repo and the image already sits in ECR (task-tracker). Uncomment to restore.
+      # - uses: aws-actions/amazon-ecr-login@v2
+      #   id: ecr
  
-      - name: Build and push the image
-        env:
-          REGISTRY: ${{ steps.ecr.outputs.registry }}
-          REPO: ${{ vars.ECR_REPO }}
-          TAG: ${{ github.sha }}
-        run: |
-          docker build --platform linux/amd64 \
-            -t $REGISTRY/$REPO:$TAG app
-          docker push $REGISTRY/$REPO:$TAG
+      # - name: Build and push the image
+      #   env:
+      #     REGISTRY: ${{ steps.ecr.outputs.registry }}
+      #     REPO: ${{ vars.ECR_REPO }}
+      #     TAG: ${{ github.sha }}
+      #   run: |
+      #     docker build --platform linux/amd64 \
+      #       -t $REGISTRY/$REPO:$TAG app
+      #     docker push $REGISTRY/$REPO:$TAG
  
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -48,10 +52,17 @@ jobs:
       - name: Apply
         working-directory: infra
         run: |
+          # NEW: fail early if the IMAGE_TAG variable is missing
+          : "${IMAGE_TAG:?Set the IMAGE_TAG repository variable to a tag that exists in ECR}"
           terraform init
+          # OLD (commented out): tagged with the commit SHA that the build step pushed
+          # terraform apply -auto-approve \
+          #   -var-file=ci.tfvars \
+          #   -var="image_tag=${{ github.sha }}"
+          # NEW: use the existing ECR tag
           terraform apply -auto-approve \
             -var-file=ci.tfvars \
-            -var="image_tag=${{ github.sha }}"
+            -var="image_tag=${IMAGE_TAG}"
  
       - name: Show the URL
         working-directory: infra

@@ -18,6 +18,9 @@ variable "region"      { type = string }
 variable "group_name"  { type = string }
 variable "github_org"  { type = string }   # internship-cws-cloud
 variable "github_repo" { type = string }   # demo-personal-group1b
+# NEW: numeric IDs for the immutable OIDC subject (gh api repos/OWNER/REPO --jq .owner.id / .id)
+variable "github_owner_id" { type = string }
+variable "github_repo_id"  { type = string }
  
 # your own account number, looked up rather than typed
 data "aws_caller_identity" "me" {}
@@ -81,7 +84,10 @@ data "aws_iam_openid_connect_provider" "github" {
 # added to infra-bootstrap/main.tf
  
 locals {
-  repo = "${var.github_org}/${var.github_repo}"
+  # OLD (commented out): plain-name subject, no longer matches this repo's OIDC setting
+  # repo = "${var.github_org}/${var.github_repo}"
+  # NEW: immutable subject format owner@ID/repo@ID
+  repo = "${var.github_org}@${var.github_owner_id}/${var.github_repo}@${var.github_repo_id}"
 }
  
 data "aws_iam_policy_document" "plan_trust" {
