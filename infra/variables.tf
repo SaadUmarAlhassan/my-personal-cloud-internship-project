@@ -32,3 +32,4 @@ variable "desired_count" {
   description = "The number of instance tasks to run in the ECS service"
   default     = 2
 }
+
