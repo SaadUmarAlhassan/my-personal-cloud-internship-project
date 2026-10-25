@@ -7,15 +7,13 @@ resource "aws_lb" "web" {
 }
 
 resource "aws_lb_target_group" "web" {
-  name     = "${var.group_name}-tg"
-  port     = var.container_port
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default.id
-
-  # MUST be "ip" for Fargate. "instance" is the default and it
-  # fails in a way that looks like a health check problem.
+  name        = "${var.group_name}-tg"
+  port        = var.container_port
+  protocol    = "HTTP"
+  vpc_id      = data.aws_vpc.default.id
   target_type = "ip"
 
+  deregistration_delay = 30
   health_check {
     path                = "/health"
     matcher             = "200"

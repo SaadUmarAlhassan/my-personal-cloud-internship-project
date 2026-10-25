@@ -78,6 +78,9 @@ resource "aws_ecs_service" "web" {
   desired_count   = var.desired_count # Uses your new variable instead of hardcoded 2
   launch_type     = "FARGATE"
 
+  #week  5
+  health_check_grace_period_seconds = 60
+
   network_configuration {
     subnets          = data.aws_subnets.default.ids
     security_groups  = [aws_security_group.app.id]
