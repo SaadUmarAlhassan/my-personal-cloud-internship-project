@@ -12,8 +12,12 @@ variable "group_name" {
 variable "image_tag" {
   description = "Which image tag in ECR to deploy"
   type        = string
-  default     = "v1"
+  # default     = "v1"
+  default = "broken-test-tag-to-roll-back"
 }
+
+
+
 
 variable "container_port" {
   type    = number
