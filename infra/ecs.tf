@@ -91,3 +91,26 @@ resource "aws_ecs_service" "web" {
   # the listener must exist before the service registers targets
   depends_on = [aws_lb_listener.http]
 }
+
+
+# Week 5
+
+# ecs.tf
+resource "aws_ecs_service" "web" {
+  name            = "${var.group_name}-web"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.web.arn
+  desired_count   = var.desired_count # variable, not a hardcoded 2
+  launch_type     = "FARGATE"
+  network_configuration {
+    # all three default subnets, which sit in three different AZs
+    subnets          = data.aws_subnets.default.ids
+    security_groups  = [aws_security_group.app.id]
+    assign_public_ip = true
+  }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.web.arn
+    container_name   = "web"
+    container_port   = 8080
+  }
+}
