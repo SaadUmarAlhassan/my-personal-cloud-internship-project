@@ -25,3 +25,11 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+# Week 5  - Desired count variable needed
+variable "desired_count" {
+  type        = number
+  description = "The number of instance tasks to run in the ECS service"
+  default     = 2
+}
+

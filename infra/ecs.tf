@@ -69,25 +69,27 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.group_name}-cluster"
 }
 
+# Combined resource from Week 4 and 5
+
 resource "aws_ecs_service" "web" {
-  name            = "${var.group_name}-svc"
+  name            = "${var.group_name}-web"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.web.arn
-  desired_count   = 1
+  desired_count   = var.desired_count # Uses your new variable instead of hardcoded 2
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
     security_groups  = [aws_security_group.app.id]
-    assign_public_ip = true # needed to pull the image from ECR
+    assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.web.arn
-    container_name   = "web" # must match the name in the task def
+    container_name   = "web"
     container_port   = var.container_port
   }
 
-  # the listener must exist before the service registers targets
+  # The listener must exist before the service registers targets
   depends_on = [aws_lb_listener.http]
 }
