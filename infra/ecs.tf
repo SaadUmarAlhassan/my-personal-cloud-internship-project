@@ -81,6 +81,15 @@ resource "aws_ecs_service" "web" {
   #week  5
   health_check_grace_period_seconds = 60
 
+  # deployment that wont drop reuests
+
+  deployment_minimum_healthy_percent = 100 # never go below the current count
+  deployment_maximum_percent         = 200 # may temporarily run double
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true # a deployment that never goes healthy is
+  }
+
   network_configuration {
     subnets          = data.aws_subnets.default.ids
     security_groups  = [aws_security_group.app.id]
