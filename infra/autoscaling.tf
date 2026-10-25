@@ -7,22 +7,21 @@ resource "aws_appautoscaling_target" "web" {
 }
 resource "aws_appautoscaling_policy" "requests" {
   name               = "${var.group_name}-scale-on-requests"
-  policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.web.resource_id
-  scalable_dimension = aws_appautoscaling_target.web.scalable_dimension
   service_namespace  = aws_appautoscaling_target.web.service_namespace
+  scalable_dimension = aws_appautoscaling_target.web.scalable_dimension
+  resource_id        = aws_appautoscaling_target.web.resource_id
+  policy_type        = "TargetTrackingScaling"
+
   target_tracking_scaling_policy_configuration {
     target_value       = 60  # requests per minute per task
-    scale_in_cooldown  = 300 # slow to shrink
     scale_out_cooldown = 60  # quick to grow
+    scale_in_cooldown  = 300 # slow to shrink
+
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
 
-      # the ALB and target group, in the form AWS expects
-      resource_label = join("/", [
-        split("/", aws_lb.web.arn_suffix)[1],
-        aws_lb_target_group.web.arn_suffix,
-      ])
+      # This constructs the exact format AWS expects: app/load-balancer-name/id/target-group-name/id
+      resource_label = "${aws_lb.web.arn_suffix}/${aws_lb_target_group.web.arn_suffix}"
     }
   }
 }
